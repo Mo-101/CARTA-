@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "FlameBorn - Learn & Earn African Health Education",
   description:
     "Join thousands of African youth learning health sciences and earning FLB tokens. Zero cost, maximum impact.",
-    generator: 'v0.dev'
+  generator: "v0.dev",
 }
 
 export default function RootLayout({

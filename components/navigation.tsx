@@ -18,6 +18,7 @@ import {
   Bot,
   Shield,
   DollarSign,
+  Flame,
 } from "lucide-react"
 
 const navigationItems = [
@@ -59,7 +60,7 @@ export function Navigation() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? "bg-black/90 backdrop-blur-md border-b border-teal-500/20" : "bg-transparent"
+          scrolled ? "bg-black/90 backdrop-blur-md border-b border-orange-500/20" : "bg-transparent"
         }`}
       >
         <div className="container mx-auto px-4">
@@ -67,13 +68,13 @@ export function Navigation() {
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2 group">
               <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-red-500 rounded-lg flex items-center justify-center">
-                  <Zap className="h-6 w-6 text-white" />
+                <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+                  <Flame className="h-6 w-6 text-white" />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-red-500 rounded-lg blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
               </div>
-              <span className="text-xl font-bold text-white group-hover:text-teal-300 transition-colors">
-                AlgoSensei
+              <span className="text-xl font-bold text-white group-hover:text-orange-300 transition-colors">
+                FlameBorn
               </span>
             </Link>
 
@@ -89,8 +90,8 @@ export function Navigation() {
                       variant="ghost"
                       className={`relative px-4 py-2 rounded-xl transition-all duration-300 group ${
                         active
-                          ? "bg-gradient-to-r from-teal-500/20 to-red-500/20 text-white border border-teal-500/30"
-                          : "text-gray-300 hover:text-white hover:bg-teal-500/10"
+                          ? "bg-gradient-to-r from-orange-500/20 to-red-500/20 text-white border border-orange-500/30"
+                          : "text-gray-300 hover:text-white hover:bg-orange-500/10"
                       }`}
                     >
                       <Icon className="h-4 w-4 mr-2" />
@@ -98,7 +99,7 @@ export function Navigation() {
                       {active && (
                         <motion.div
                           layoutId="activeTab"
-                          className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-red-500/10 rounded-xl border border-teal-500/30"
+                          className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-xl border border-orange-500/30"
                           transition={{ type: "spring", duration: 0.6 }}
                         />
                       )}
@@ -112,7 +113,7 @@ export function Navigation() {
             <Button
               variant="ghost"
               size="sm"
-              className="lg:hidden text-white hover:text-teal-300"
+              className="lg:hidden text-white hover:text-orange-300"
               onClick={() => setIsOpen(!isOpen)}
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -130,7 +131,7 @@ export function Navigation() {
             exit={{ opacity: 0, y: -20 }}
             className="fixed top-16 left-0 right-0 z-40 lg:hidden"
           >
-            <div className="bg-black/95 backdrop-blur-md border-b border-teal-500/20 shadow-2xl">
+            <div className="bg-black/95 backdrop-blur-md border-b border-orange-500/20 shadow-2xl">
               <div className="container mx-auto px-4 py-4">
                 <div className="grid grid-cols-2 gap-2">
                   {navigationItems.map((item) => {
@@ -143,8 +144,8 @@ export function Navigation() {
                           variant="ghost"
                           className={`w-full justify-start px-4 py-3 rounded-xl transition-all duration-300 ${
                             active
-                              ? "bg-gradient-to-r from-teal-500/20 to-red-500/20 text-white border border-teal-500/30"
-                              : "text-gray-300 hover:text-white hover:bg-teal-500/10"
+                              ? "bg-gradient-to-r from-orange-500/20 to-red-500/20 text-white border border-orange-500/30"
+                              : "text-gray-300 hover:text-white hover:bg-orange-500/10"
                           }`}
                           onClick={() => setIsOpen(false)}
                         >

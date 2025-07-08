@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
@@ -21,10 +20,6 @@ import {
   Zap,
   Globe,
   Target,
-  Star,
-  Play,
-  Eye,
-  ThumbsUp,
 } from "lucide-react"
 import { Navigation } from "@/components/navigation"
 
@@ -448,10 +443,10 @@ function HealthImpactPreview() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-400 text-sm font-medium">Lives Impacted</p>
-                <p className="text-2xl font-bold text-white">2.4M</p>
+                <p className="text-green-400 text-sm font-medium">Funded</p>
+                <p className="text-2xl font-bold text-white">$2.4M</p>
               </div>
-              <Users className="h-8 w-8 text-green-500" />
+              <TrendingUp className="h-8 w-8 text-green-500" />
             </div>
           </CardContent>
         </Card>
@@ -463,7 +458,7 @@ function HealthImpactPreview() {
                 <p className="text-blue-400 text-sm font-medium">Countries</p>
                 <p className="text-2xl font-bold text-white">54</p>
               </div>
-              <MapPin className="h-8 w-8 text-blue-500" />
+              <Globe className="h-8 w-8 text-blue-500" />
             </div>
           </CardContent>
         </Card>
@@ -472,46 +467,58 @@ function HealthImpactPreview() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-orange-400 text-sm font-medium">BNB Donated</p>
-                <p className="text-2xl font-bold text-white">12,847</p>
+                <p className="text-orange-400 text-sm font-medium">Lives Impacted</p>
+                <p className="text-2xl font-bold text-white">847K</p>
               </div>
-              <Coins className="h-8 w-8 text-orange-500" />
+              <Users className="h-8 w-8 text-orange-500" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Health Facilities */}
+      {/* Health Facility Map Preview */}
       <Card className="bg-black/80 border-orange-500/30 backdrop-blur-md">
         <CardHeader>
           <CardTitle className="text-white flex items-center">
-            <Heart className="mr-2 h-5 w-5 text-orange-500" />
-            Verified Health Facilities
+            <MapPin className="mr-2 h-5 w-5 text-orange-500" />
+            Health Facility Network
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <FacilityCard
-              name="Lagos General Hospital"
-              location="Lagos, Nigeria"
-              type="Hospital"
-              patients="5,200/month"
-              impact="High"
-            />
-            <FacilityCard
-              name="Nairobi Community Clinic"
-              location="Nairobi, Kenya"
-              type="Clinic"
-              patients="1,800/month"
-              impact="Medium"
-            />
-            <FacilityCard
-              name="Cape Town Health Center"
-              location="Cape Town, South Africa"
-              type="Health Center"
-              patients="3,100/month"
-              impact="High"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <h4 className="text-white font-medium">Top Funded Facilities</h4>
+              <div className="space-y-3">
+                <FacilityCard
+                  name="Lagos University Teaching Hospital"
+                  location="Lagos, Nigeria"
+                  funding={45000}
+                  patients={12500}
+                />
+                <FacilityCard
+                  name="Kenyatta National Hospital"
+                  location="Nairobi, Kenya"
+                  funding={38000}
+                  patients={9800}
+                />
+                <FacilityCard
+                  name="Chris Hani Baragwanath Hospital"
+                  location="Johannesburg, South Africa"
+                  funding={52000}
+                  patients={15200}
+                />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h4 className="text-white font-medium">Regional Distribution</h4>
+              <div className="space-y-2">
+                <RegionBar region="West Africa" percentage={35} />
+                <RegionBar region="East Africa" percentage={28} />
+                <RegionBar region="Southern Africa" percentage={22} />
+                <RegionBar region="Central Africa" percentage={10} />
+                <RegionBar region="North Africa" percentage={5} />
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -528,31 +535,38 @@ function TechnologyStack() {
           Technology Stack
         </CardTitle>
         <CardDescription className="text-gray-400">
-          Built with cutting-edge technologies for scalability and security
+          Built on cutting-edge blockchain and web technologies
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <TechStackCard
-            category="Frontend"
-            technologies={["Next.js 15", "React 18", "TypeScript", "Tailwind CSS", "Framer Motion", "Three.js"]}
-            color="blue"
-          />
-          <TechStackCard
-            category="Backend"
-            technologies={["Node.js", "Prisma ORM", "PostgreSQL", "AI SDK", "Server Actions", "API Routes"]}
-            color="green"
-          />
-          <TechStackCard
-            category="Blockchain"
-            technologies={["Solidity", "BNB Smart Chain", "OpenZeppelin", "Web3.js", "Smart Contracts", "IPFS"]}
-            color="purple"
-          />
-          <TechStackCard
-            category="Infrastructure"
-            technologies={["Vercel", "Neon Database", "AI Integration", "Real-time APIs", "CDN", "Analytics"]}
-            color="orange"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="space-y-3">
+            <h4 className="text-white font-medium">Blockchain</h4>
+            <div className="space-y-2">
+              <TechItem name="Binance Smart Chain" status="active" />
+              <TechItem name="MetaMask Integration" status="active" />
+              <TechItem name="Smart Contracts" status="active" />
+              <TechItem name="Web3 Wallet" status="active" />
+            </div>
+          </div>
+          <div className="space-y-3">
+            <h4 className="text-white font-medium">Frontend</h4>
+            <div className="space-y-2">
+              <TechItem name="Next.js 14" status="active" />
+              <TechItem name="React 18" status="active" />
+              <TechItem name="Tailwind CSS" status="active" />
+              <TechItem name="Framer Motion" status="active" />
+            </div>
+          </div>
+          <div className="space-y-3">
+            <h4 className="text-white font-medium">Backend</h4>
+            <div className="space-y-2">
+              <TechItem name="PostgreSQL" status="active" />
+              <TechItem name="Prisma ORM" status="active" />
+              <TechItem name="API Routes" status="active" />
+              <TechItem name="Real-time Updates" status="active" />
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -560,13 +574,13 @@ function TechnologyStack() {
 }
 
 // Helper Components
-function MetricCard({ icon, title, value, change, positive }) {
+function MetricCard({ icon, title, value, change, positive }: any) {
   return (
-    <Card className="bg-gray-900/50 border-gray-800">
+    <Card className="bg-black/80 border-gray-800 backdrop-blur-md">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
           {icon}
-          <Badge className={positive ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}>{change}</Badge>
+          <span className={`text-sm ${positive ? "text-green-400" : "text-red-400"}`}>{change}</span>
         </div>
         <div>
           <p className="text-2xl font-bold text-white">{value}</p>
@@ -577,22 +591,22 @@ function MetricCard({ icon, title, value, change, positive }) {
   )
 }
 
-function ArchitectureCard({ title, description, features, color }) {
+function ArchitectureCard({ title, description, features, color }: any) {
   const colorClasses = {
-    blue: "border-blue-500/30 bg-blue-900/10",
-    purple: "border-purple-500/30 bg-purple-900/10",
-    green: "border-green-500/30 bg-green-900/10",
+    blue: "border-blue-500/30 bg-blue-500/10",
+    purple: "border-purple-500/30 bg-purple-500/10",
+    green: "border-green-500/30 bg-green-500/10",
   }
 
   return (
-    <Card className={`${colorClasses[color]} transition-colors hover:border-opacity-50`}>
+    <Card className={`${colorClasses[color]} backdrop-blur-md`}>
       <CardHeader>
         <CardTitle className="text-white text-lg">{title}</CardTitle>
         <CardDescription className="text-gray-400">{description}</CardDescription>
       </CardHeader>
       <CardContent>
         <ul className="space-y-2">
-          {features.map((feature, index) => (
+          {features.map((feature: string, index: number) => (
             <li key={index} className="flex items-center text-sm text-gray-300">
               <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
               {feature}
@@ -604,7 +618,7 @@ function ArchitectureCard({ title, description, features, color }) {
   )
 }
 
-function TokenDistributionItem({ label, percentage, color }) {
+function TokenDistributionItem({ label, percentage, color }: any) {
   return (
     <div className="space-y-2">
       <div className="flex justify-between text-sm">
@@ -621,37 +635,27 @@ function TokenDistributionItem({ label, percentage, color }) {
   )
 }
 
-function CourseCard({ title, description, reward, duration, difficulty, progress = 0, completed = false }) {
+function CourseCard({ title, description, reward, duration, difficulty, progress, completed }: any) {
   return (
-    <Card className="bg-gray-900/50 border-gray-800 hover:border-orange-500/50 transition-colors">
-      <CardHeader>
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-white text-lg">{title}</CardTitle>
-          <Badge variant="outline" className="bg-orange-900/30 text-orange-400 border-orange-800">
-            {reward} FLB
-          </Badge>
-        </div>
-        <CardDescription className="text-gray-400">{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <Card className="bg-gray-900/50 border-gray-700 hover:border-orange-500/50 transition-colors">
+      <CardContent className="p-4">
         <div className="space-y-3">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-400 flex items-center">
-              <Clock className="mr-1 h-4 w-4" />
-              {duration} min
-            </span>
-            <span className="text-gray-400 capitalize">{difficulty}</span>
+          <div className="flex items-start justify-between">
+            <h4 className="text-white font-medium text-sm">{title}</h4>
+            {completed && <CheckCircle className="h-5 w-5 text-green-500" />}
           </div>
-          {completed ? (
-            <Button className="w-full bg-green-600 hover:bg-green-700 text-white" disabled>
-              <CheckCircle className="mr-2 h-4 w-4" />
-              Completed
-            </Button>
-          ) : (
-            <Button className="w-full bg-orange-500 hover:bg-orange-600 text-black font-bold">
-              <Play className="mr-2 h-4 w-4" />
-              Start Course
-            </Button>
+          <p className="text-gray-400 text-xs">{description}</p>
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-orange-400">{reward} FLB</span>
+            <span className="text-gray-400">{duration} min</span>
+          </div>
+          <Badge variant="outline" className="text-xs">
+            {difficulty}
+          </Badge>
+          {progress > 0 && (
+            <div className="w-full bg-gray-800 rounded-full h-1">
+              <div className="h-1 rounded-full bg-orange-500" style={{ width: `${progress}%` }} />
+            </div>
           )}
         </div>
       </CardContent>
@@ -659,110 +663,75 @@ function CourseCard({ title, description, reward, duration, difficulty, progress
   )
 }
 
-function SubmissionPreview({ title, user, type, flb, priority, evidence }) {
-  const getPriorityColor = () => {
-    switch (priority) {
-      case "HIGH":
-        return "text-red-400 bg-red-900/20 border-red-800"
-      case "MEDIUM":
-        return "text-yellow-400 bg-yellow-900/20 border-yellow-800"
-      default:
-        return "text-gray-400 bg-gray-900/20 border-gray-800"
-    }
+function SubmissionPreview({ title, user, type, flb, priority, evidence }: any) {
+  const priorityColors = {
+    HIGH: "text-red-400 bg-red-500/20",
+    MEDIUM: "text-yellow-400 bg-yellow-500/20",
+    LOW: "text-green-400 bg-green-500/20",
   }
 
   return (
-    <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg border border-gray-800">
-      <div className="flex-1">
-        <div className="flex items-center space-x-2 mb-1">
-          <h4 className="text-white font-medium">{title}</h4>
-          <Badge variant="outline" className="bg-orange-900/30 text-orange-400 border-orange-800">
-            {flb} FLB
+    <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+      <div className="space-y-1">
+        <h4 className="text-white font-medium text-sm">{title}</h4>
+        <p className="text-gray-400 text-xs">{user}</p>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="text-xs">
+            {type}
           </Badge>
-          <Badge variant="outline" className={getPriorityColor()}>
-            {priority}
-          </Badge>
-        </div>
-        <div className="flex items-center space-x-4 text-sm text-gray-400">
-          <span>{type.replace("_", " ")}</span>
-          <span>{user}</span>
-          {evidence && (
-            <span className="flex items-center">
-              <Eye className="mr-1 h-3 w-3" />
-              Evidence
-            </span>
-          )}
+          <Badge className={`text-xs ${priorityColors[priority]}`}>{priority}</Badge>
         </div>
       </div>
-      <div className="flex space-x-2">
-        <Button size="sm" className="bg-green-600 hover:bg-green-700">
-          <ThumbsUp className="h-4 w-4" />
-        </Button>
-        <Button size="sm" variant="destructive">
-          <ThumbsUp className="h-4 w-4 rotate-180" />
-        </Button>
+      <div className="text-right space-y-1">
+        <p className="text-orange-400 font-medium">{flb} FLB</p>
+        <div className="flex items-center gap-1">
+          {evidence ? (
+            <CheckCircle className="h-4 w-4 text-green-500" />
+          ) : (
+            <Clock className="h-4 w-4 text-yellow-500" />
+          )}
+          <span className="text-xs text-gray-400">{evidence ? "Evidence" : "Pending"}</span>
+        </div>
       </div>
     </div>
   )
 }
 
-function FacilityCard({ name, location, type, patients, impact }) {
+function FacilityCard({ name, location, funding, patients }: any) {
   return (
-    <Card className="bg-gray-900/50 border-gray-800">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-white text-sm">{name}</CardTitle>
-          <Shield className="h-4 w-4 text-orange-500" />
-        </div>
-        <CardDescription className="text-gray-400 text-xs">{location}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2 text-xs">
-          <div className="flex justify-between">
-            <span className="text-gray-400">Type:</span>
-            <span className="text-white">{type}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400">Patients:</span>
-            <span className="text-white">{patients}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400">Impact:</span>
-            <Badge
-              className={`text-xs ${impact === "High" ? "bg-green-500/20 text-green-400" : "bg-yellow-500/20 text-yellow-400"}`}
-            >
-              {impact}
-            </Badge>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+      <h5 className="text-white font-medium text-sm">{name}</h5>
+      <p className="text-gray-400 text-xs mb-2">{location}</p>
+      <div className="flex justify-between text-xs">
+        <span className="text-green-400">${funding.toLocaleString()} funded</span>
+        <span className="text-blue-400">{patients.toLocaleString()} patients</span>
+      </div>
+    </div>
   )
 }
 
-function TechStackCard({ category, technologies, color }) {
-  const colorClasses = {
-    blue: "border-blue-500/30",
-    green: "border-green-500/30",
-    purple: "border-purple-500/30",
-    orange: "border-orange-500/30",
-  }
-
+function RegionBar({ region, percentage }: any) {
   return (
-    <Card className={`bg-gray-900/50 ${colorClasses[color]}`}>
-      <CardHeader>
-        <CardTitle className="text-white text-lg">{category}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          {technologies.map((tech, index) => (
-            <div key={index} className="flex items-center text-sm text-gray-300">
-              <Star className="h-3 w-3 text-orange-500 mr-2 flex-shrink-0" />
-              {tech}
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <div className="space-y-1">
+      <div className="flex justify-between text-sm">
+        <span className="text-gray-400">{region}</span>
+        <span className="text-white">{percentage}%</span>
+      </div>
+      <div className="w-full bg-gray-800 rounded-full h-2">
+        <div className="h-2 rounded-full bg-orange-500" style={{ width: `${percentage}%` }} />
+      </div>
+    </div>
+  )
+}
+
+function TechItem({ name, status }: any) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-gray-300 text-sm">{name}</span>
+      <div className="flex items-center gap-1">
+        <div className="w-2 h-2 bg-green-500 rounded-full" />
+        <span className="text-green-400 text-xs">{status}</span>
+      </div>
+    </div>
   )
 }
