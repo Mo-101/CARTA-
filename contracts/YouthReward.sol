@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: KAIRO-Covenant-v1.0
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./FlameBornToken.sol";
 
 contract YouthReward is AccessControl, ReentrancyGuard {
     bytes32 public constant VALIDATOR_ROLE = keccak256("VALIDATOR_ROLE");
     bytes32 public constant COURSE_ADMIN_ROLE = keccak256("COURSE_ADMIN_ROLE");
+    bytes32 public constant YOUTH_ROLE = keccak256("YOUTH_ROLE");
+
+    error AdminRequired();
     
     FlameBornToken public flbToken;
-    
     struct Course {
         uint256 id;
         string name;
@@ -51,6 +52,8 @@ contract YouthReward is AccessControl, ReentrancyGuard {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(VALIDATOR_ROLE, msg.sender);
         _grantRole(COURSE_ADMIN_ROLE, msg.sender);
+        _grantRole(YOUTH_ROLE, msg.sender);
+        
         flbToken = FlameBornToken(_flbToken);
     }
     
@@ -119,7 +122,7 @@ contract YouthReward is AccessControl, ReentrancyGuard {
         // Transfer reward
         rewardPool -= reward;
         totalFLBDistributed += reward;
-        flbToken.mint(msg.sender, reward);
+        flbToken.mintAfterValidation(msg.sender, reward, "Course Completion Reward");
         
         emit CourseCompleted(msg.sender, courseId, reward);
     }
@@ -146,7 +149,7 @@ contract YouthReward is AccessControl, ReentrancyGuard {
         // Transfer reward
         rewardPool -= flbAmount;
         totalFLBDistributed += flbAmount;
-        flbToken.mint(youth, flbAmount);
+        flbToken.mintAfterValidation(youth, flbAmount, actionType);
         
         emit YouthActionRewarded(youth, actionType, flbAmount);
     }
