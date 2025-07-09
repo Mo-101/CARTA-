@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: KAIRO-Covenant-v1.0
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol"; // Corrected path
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
 import "./FlameBornToken.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
 contract HealthImpact is AccessControl, ReentrancyGuard, Pausable {
     bytes32 public constant VERIFIER_ROLE = keccak256("VERIFIER_ROLE");
