@@ -1,149 +1,120 @@
-// SPDX-License-Identifier: KAIRO-Covenant-v1.0
-pragma solidity ^0.8.20;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract FlameBornToken is ERC20, ERC20Burnable, ERC20Pausable, AccessControl, ReentrancyGuard {
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-    bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
-    
-    uint256 public constant MAX_SUPPLY = 1_000_000_000 * 10**18; // 1 billion FLB
-    uint256 public totalMinted;
-    
-    // Vesting and distribution tracking
-    mapping(address => uint256) public vestingSchedule;
-    mapping(address => uint256) public vestedAmount;
-    mapping(address => bool) public isHealthFacility;
-    mapping(address => bool) public isValidator;
-    
-    // Events
-    event HealthFacilityVerified(address indexed facility, bool verified);
-    event ValidatorRegistered(address indexed validator, bool registered);
-    event TokensVested(address indexed beneficiary, uint256 amount);
-    event EmergencyPause(address indexed admin, string reason);
-    
-    constructor(
-        string memory name,
-        string memory symbol,
-        uint256 initialSupply
-    ) ERC20(name, symbol) {
-        require(initialSupply <= MAX_SUPPLY, "Initial supply exceeds max supply");
-        
+/**
+ * @title FlameBornToken (Soulbound ERC20)
+ * @dev Non-transferable (soulbound) ERC20 with custom roles and African identity enforcement.
+ * - DAO_ROLE is core for on-chain governance and funding of African health/youth projects.
+ * - Transfers are permanently disabled (except mint/burn by validators).
+ * - All important actions (mint, African ID registration, youth reward) emit events for analytics.
+ */
+contract FlameBornToken is ERC20, AccessControl {
+    // === Roles ===
+    bytes32 public constant VALIDATOR_ROLE = keccak256("VALIDATOR_ROLE");
+    bytes32 public constant DAO_ROLE = keccak256("DAO_ROLE");
+    bytes32 public constant YOUTH_ROLE = keccak256("YOUTH_ROLE");
+
+    // === Soulbound and ID Storage ===
+    mapping(address => bool) private _soulbound;
+    mapping(address => string) private _africanID;
+
+    // === Events ===
+    event AfricanIDRegistered(address indexed account, string idHash);
+    event MintedAfterValidation(address indexed to, uint256 amount, string interventionProof);
+    event YouthActionRewarded(address indexed youth, uint256 amount, string actionType);
+
+    /**
+     * @dev Initializes the FLB token.
+     * - Sets admin, validator, DAO roles to deployer.
+     * - Mints genesis supply to deployer (who becomes soulbound).
+     */
+    constructor(uint256 initialSupply) ERC20("Flameborn Token", "FLB") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(MINTER_ROLE, msg.sender);
-        _grantRole(PAUSER_ROLE, msg.sender);
-        _grantRole(BURNER_ROLE, msg.sender);
-        
-        // Mint initial supply to deployer
-        _mint(msg.sender, initialSupply);
-        totalMinted = initialSupply;
+        _grantRole(VALIDATOR_ROLE, msg.sender);
+        _grantRole(DAO_ROLE, msg.sender);
+        _mint(msg.sender, initialSupply * (10 ** decimals())); // Standard: 18 decimals
+        _soulbound[msg.sender] = true;
     }
-    
-    // Minting function with supply cap
-    function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) nonReentrant {
-        require(totalMinted + amount <= MAX_SUPPLY, "Minting would exceed max supply");
-        require(to != address(0), "Cannot mint to zero address");
-        
-        _mint(to, amount);
-        totalMinted += amount;
-    }
-    
-    // Batch minting for efficiency
-    function batchMint(
-        address[] calldata recipients,
-        uint256[] calldata amounts
-    ) external onlyRole(MINTER_ROLE) nonReentrant {
-        require(recipients.length == amounts.length, "Arrays length mismatch");
-        
-        uint256 totalAmount = 0;
-        for (uint256 i = 0; i < amounts.length; i++) {
-            totalAmount += amounts[i];
+
+    /**
+     * @dev Override ERC20/AccessControl update to enforce soulbound logic.
+     * - Blocks all transfers (except mint and burn).
+     * - Mints make the recipient soulbound forever.
+     */
+        function _update(address from, address to, uint256 value)
+        internal
+        override(ERC20)
+
+    {
+        if (from != address(0) && to != address(0)) {
+            revert("FLB: Token is soulbound and non-transferable");
         }
-        
-        require(totalMinted + totalAmount <= MAX_SUPPLY, "Batch minting would exceed max supply");
-        
-        for (uint256 i = 0; i < recipients.length; i++) {
-            require(recipients[i] != address(0), "Cannot mint to zero address");
-            _mint(recipients[i], amounts[i]);
+        super._update(from, to, value);
+        if (from == address(0) && to != address(0)) {
+            _soulbound[to] = true;
         }
-        
-        totalMinted += totalAmount;
+        // NOTE: Burning does NOT reset soulbound status (intentional).
     }
-    
-    // Health facility verification
-    function verifyHealthFacility(address facility, bool verified) 
-        external onlyRole(DEFAULT_ADMIN_ROLE) {
-        isHealthFacility[facility] = verified;
-        emit HealthFacilityVerified(facility, verified);
+
+    /**
+     * @dev Register an African ID (hash) for caller, only once.
+     * Emits AfricanIDRegistered.
+     */
+    function registerAfricanID(string memory idHash) external {
+        require(bytes(_africanID[msg.sender]).length == 0, "FLB: African ID already registered");
+        require(bytes(idHash).length > 0, "FLB: ID hash cannot be empty");
+        _africanID[msg.sender] = idHash;
+        emit AfricanIDRegistered(msg.sender, idHash);
     }
-    
-    // Validator registration
-    function registerValidator(address validator, bool registered) 
-        external onlyRole(DEFAULT_ADMIN_ROLE) {
-        isValidator[validator] = registered;
-        emit ValidatorRegistered(validator, registered);
-    }
-    
-    // Vesting functionality
-    function setVestingSchedule(address beneficiary, uint256 amount) 
-        external onlyRole(DEFAULT_ADMIN_ROLE) {
-        vestingSchedule[beneficiary] = amount;
-    }
-    
-    function releaseVestedTokens(address beneficiary) external nonReentrant {
-        uint256 vested = vestingSchedule[beneficiary];
-        require(vested > 0, "No tokens to vest");
-        require(vestedAmount[beneficiary] < vested, "All tokens already vested");
-        
-        uint256 toRelease = vested - vestedAmount[beneficiary];
-        vestedAmount[beneficiary] = vested;
-        
-        _mint(beneficiary, toRelease);
-        totalMinted += toRelease;
-        
-        emit TokensVested(beneficiary, toRelease);
-    }
-    
-    // Emergency functions
-    function pause(string calldata reason) public onlyRole(PAUSER_ROLE) {
-        _pause();
-        emit EmergencyPause(msg.sender, reason);
-    }
-    
-    function unpause() public onlyRole(PAUSER_ROLE) {
-        _unpause();
-    }
-    
-    // Burn function with role control
-    function burnFrom(address account, uint256 amount) public override {
-        require(
-            hasRole(BURNER_ROLE, msg.sender) || account == msg.sender,
-            "Caller is not a burner or token owner"
-        );
-        super.burnFrom(account, amount);
-    }
-    
-    // Override required by Solidity
-    function _beforeTokenTransfer(
-        address from,
+
+    /**
+     * @dev Validator mints FLB after validating an intervention (requires African recipient).
+     * Emits MintedAfterValidation.
+     */
+    function mintAfterValidation(
         address to,
-        uint256 amount
-    ) internal override(ERC20, ERC20Pausable) {
-        super._beforeTokenTransfer(from, to, amount);
+        uint256 amount,
+        string calldata interventionProof
+    ) external onlyRole(VALIDATOR_ROLE) {
+        require(_isAfrican(to), "FLB: Only African recipients allowed");
+        require(amount > 0, "FLB: Mint amount must be greater than zero");
+        require(bytes(interventionProof).length > 0, "FLB: Intervention proof cannot be empty");
+
+        _mint(to, amount);
+        emit MintedAfterValidation(to, amount, interventionProof);
     }
-    
-    // View functions
-    function getRemainingSupply() external view returns (uint256) {
-        return MAX_SUPPLY - totalMinted;
+
+    /**
+     * @dev Internal helper: checks if address has registered an African ID.
+     */
+    function _isAfrican(address account) internal view returns (bool) {
+        return bytes(_africanID[account]).length > 0;
     }
-    
-    function getVestingInfo(address beneficiary) 
-        external view returns (uint256 scheduled, uint256 released) {
-        return (vestingSchedule[beneficiary], vestedAmount[beneficiary]);
+
+    /**
+     * @dev Youth reward. YOUTH_ROLE only. Must be African, logs action.
+     * Emits YouthActionRewarded.
+     */
+    function rewardYouthAction(
+        address youth,
+        uint256 amount,
+        string memory actionType
+    ) external onlyRole(YOUTH_ROLE) {
+        require(_isAfrican(youth), "FLB: Only African youth can be rewarded");
+        require(amount > 0, "FLB: Reward amount must be greater than zero");
+        require(bytes(actionType).length > 0, "FLB: Action type cannot be empty");
+
+        _mint(youth, amount);
+        emit YouthActionRewarded(youth, amount, actionType);
+    }
+
+    /**
+     * @dev Get registered African ID hash for an address.
+     */
+    function getAfricanID(address account) external view returns (string memory) {
+        return _africanID[account];
     }
 }
